@@ -213,6 +213,12 @@ RCT_EXPORT_METHOD(customUIWithConfig: (NSDictionary *)configParams viewParams: (
     JVUIConfig *config = [self convertToCinfig:configParams];
     dispatch_async(dispatch_get_main_queue(), ^{
         [JVERIFICATIONService customUIWithConfig:config customViews:^(UIView *customAreaView) {
+            UIButton *btnSendVerifyCode = [[UIButton alloc] initWithFrame:CGRectMake(0, 200, 300, 80)];
+            [btnSendVerifyCode setTitle:@"验证码登录" forState:UIControlStateNormal];
+            [btnSendVerifyCode setBackgroundColor:[UIColor orangeColor]];
+            [btnSendVerifyCode addTarget:self action:@selector(setPhoneNumButtonAction) forControlEvents:UIControlEventTouchUpInside];
+            [customAreaView addSubview:btnSendVerifyCode];
+            return;
             for (int i = 0; i < viewParams.count; i++) {
                 RCTRootView *rctView;
                 if (self.bridge) {
@@ -240,6 +246,14 @@ RCT_EXPORT_METHOD(customUIWithConfig: (NSDictionary *)configParams viewParams: (
         }];
     });
 }
+
+-(void)setPhoneNumButtonAction {
+    [self.bridge enqueueJSCall:@"RCTDeviceEventEmitter"
+                        method:@"emit"
+                          args:@[@"setPhoneNumButton", @""]
+                    completion:NULL];
+}
+
 
 RCT_EXPORT_METHOD(getAuthorizationWithController: (BOOL *)enable)
 {
